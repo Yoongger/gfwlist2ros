@@ -1,11 +1,11 @@
 # gfwlist2ros
 gfwlist to RouterOS
 借鉴 https://github.com/goodffd/tool 修改
-#部署条件：
+# 部署条件：
 1、一个Liunx系统，并且部署nginx服务，记录ip（例如：192.168.1.4）
 2、一个能科学的旁路由，记录ip（例如：192.168.1.2）
 3、一台ROS路由，记录ip（例如：192.168.1.1）
-#部署步骤：
+# 部署步骤：
 1、Liunx系统上git本应用
   git clone https://github.com/Yoongger/gfwlist2ros.git
 修改 gfwlist2ros.sh，68行 修改 192.168.1.2 为您的旁路由ip

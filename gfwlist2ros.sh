@@ -48,6 +48,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/cokebar/gfwlist
 
 #增加额外需要加入gfwlist的域名
 echo "libreswan.org" >> ${gfwlist_domain_filename}
+echo "i.ytimg.com" >> ${gfwlist_domain_filename}
 #echo "download.mikrotik.com" >> ${gfwlist_domain_filename}
 
 #开始处理 gfwlist_domain_filename 内容

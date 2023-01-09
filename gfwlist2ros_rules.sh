@@ -59,6 +59,8 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/cokebar/gfwlist
 #增加额外需要加入gfwlist的域名
 echo "libreswan.org" >> gfwlist_domain.rsc
 echo "download.mikrotik.com" >> gfwlist_domain.rsc
+echo "i.ytimg.com" >> gfwlist_domain.rsc
+
 _green 'add some domains to gfwlist.\n'
 
 _green 'start resolve domain.\n'
@@ -79,26 +81,34 @@ if [ ${release} == "centos" ]; then
     do
       #将读取的每一行域名删除回车符、换行符
       line=$(echo ${line} | tr -d '\n' | tr -d '\r')
-      #取dig answer段的最后一行解析结果（解析出来如果是有CNAME记录和ip记录，则ip记录是在最后行）
-      ip=$(dig ${line} +short | tail -n 1)
-      ipcalc -cs ${ip}
-           if [[ $? -eq 0  && ${ip} != "0.0.0.0" && -n ${ip} ]]; then
-             echo ${ip} >> ${nginx_root}/gfwlist_ip.rsc
-           fi
-     done < gfwlist_domain.rsc
+      #取dig answer段的解析结果（解析出来如果是有CNAME记录和ip记录，则ip记录是在最后行）
+      ip=$(dig ${line} +short)
+      for row in ${ip}
+        do
+          row=$(echo ${row} | tr -d '\n' | tr -d '\r')
+ 	  ipcalc -cs ${row}
+          if [[ $? -eq 0  && ${row} != "0.0.0.0" && -n ${row} ]]; then
+            echo ${row} >> ${nginx_root}/gfwlist_ip.rsc
+          fi
+      done
+    done < gfwlist_domain.rsc
 else 
-     while read -r line
-     do
-       #将读取的每一行域名删除回车符、换行符
-       line=$(echo ${line} | tr -d '\n' | tr -d '\r')
-       #取dig answer段的最后一行解析结果（解析出来如果是有CNAME记录和ip记录，则ip记录是在最后行）
-       ip=$(dig ${line} +short | tail -n 1)
-       #其他系统用脚本判断
-       VALID_CHECK=$(echo ${ip}|awk -F. '$1<=255&&$2<=255&&$3<=255&&$4<=255{print "yes"}')
-           if [[ ${VALID_CHECK:-no} == "yes" && ${ip} != "0.0.0.0" && -n ${ip} ]]; then
-              echo ${ip} >> ${nginx_root}/gfwlist_ip.rsc
-           fi
-      done < gfwlist_domain.rsc
+    while read -r line
+    do
+      #将读取的每一行域名删除回车符、换行符
+      line=$(echo ${line} | tr -d '\n' | tr -d '\r')
+      #取dig answer段的解析结果（解析出来如果是有CNAME记录和ip记录，则ip记录是在最后行）
+      ip=$(dig ${line} +short)
+      #其他系统用脚本判断
+      for row in ${ip}
+        do
+          row=$(echo ${row} | tr -d '\n' | tr -d '\r')
+          VALID_CHECK=$(echo ${row}|awk -F. '$1<=255&&$2<=255&&$3<=255&&$4<=255{print "yes"}')
+            if [[ ${VALID_CHECK:-no} == "yes" && ${row} != "0.0.0.0" && -n ${row} ]]; then
+              echo ${row} >> ${nginx_root}/gfwlist_ip.rsc
+            fi
+      done
+    done < gfwlist_domain.rsc
 fi
 
 sort -n ${nginx_root}/gfwlist_ip.rsc | uniq > ${nginx_root}/gfwlist_ip_final.rsc

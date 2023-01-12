@@ -44,7 +44,7 @@ fi
 
 gfwlist_domain_filename=${nginx_root}"/gfwlist_domain.rsc"
 
-wget -N --no-check-certificate https://raw.githubusercontent.com/cokebar/gfwlist2dnsmasq/master/gfwlist2dnsmasq.sh && chmod +x gfwlist2dnsmasq.sh && sh ./gfwlist2dnsmasq.sh -l -o ${gfwlist_domain_filename=}
+wget -N --no-check-certificate https://raw.githubusercontent.com/cokebar/gfwlist2dnsmasq/master/gfwlist2dnsmasq.sh && chmod +x gfwlist2dnsmasq.sh && sh ./gfwlist2dnsmasq.sh -l -o ${gfwlist_domain_filename}
 
 #增加额外需要加入gfwlist的域名
 echo "libreswan.org" >> ${gfwlist_domain_filename}
